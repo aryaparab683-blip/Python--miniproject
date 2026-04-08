@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Study Tracker{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h1>Dashboard</h1>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-content">
+                <h3>Today</h3>
+                <p class="stat-value">{{ daily_time }} min</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-content">
+                <h3>This Week</h3>
+                <p class="stat-value">{{ weekly_time }} min</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-content">
+                <h3>Current Streak</h3>
+                <p class="stat-value">{{ streak_data.current_streak }} days</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-content">
+                <h3>Pending Tasks</h3>
+                <p class="stat-value">{{ pending_tasks }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <h2>Subject Distribution</h2>
+            <canvas id="subjectChart"></canvas>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Recent Sessions</h2>
+            {% if recent_sessions %}
+                <div class="sessions-list">
+                    {% for session in recent_sessions %}
+                        <div class="session-item">
+                            <div class="session-info">
+                                <span class="session-subject" style="background-color: {{ session.color or '#3b82f6' }}">
+                                    {{ session.subject_name or 'No Subject' }}
+                                </span>
+                                <span class="session-duration">{{ session.duration }} min</span>
+                            </div>
+                            <div class="session-time">
+                                {{ session.start_time.strftime('%b %d, %I:%M %p') }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="no-data">No sessions yet. Start studying!</p>
+            {% endif %}
+            <a href="{{ url_for('pomodoro.pomodoro_view') }}" class="btn btn-primary btn-block">Start Session</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const subjectData = {{ subject_stats | tojson }};
+
+    if (subjectData && subjectData.length > 0) {
+        const ctx = document.getElementById('subjectChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: subjectData.map(s => s.name),
+                datasets: [{
+                    data: subjectData.map(s => s.total_time),
+                    backgroundColor: subjectData.map(s => s.color),
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}
