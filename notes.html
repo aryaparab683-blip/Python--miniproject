@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Notes - Study Tracker{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1>Study Notes</h1>
+        <button class="btn btn-primary" onclick="showCreateModal()">Add Note</button>
+    </div>
+
+    <div class="notes-grid">
+        {% for note in notes %}
+            <div class="note-card">
+                <div class="note-header">
+                    <h3>{{ note.title }}</h3>
+                    {% if note.subject_name %}
+                        <span class="subject-badge" style="background-color: {{ note.subject_color }}">
+                            {{ note.subject_name }}
+                        </span>
+                    {% endif %}
+                </div>
+                <div class="note-content">
+                    <p>{{ note.content }}</p>
+                </div>
+                <div class="note-footer">
+                    <span class="note-date">{{ note.created_at.strftime('%Y-%m-%d') }}</span>
+                    <div class="note-actions">
+                        <button class="btn-icon" onclick="showEditModal('{{ note.id }}', '{{ note.title }}', `{{ note.content }}`)">✏️</button>
+                        <form method="POST" action="{{ url_for('notes.delete_note', note_id=note.id) }}" style="display: inline;">
+                            <button type="submit" class="btn-icon" onclick="return confirm('Delete this note?')">🗑️</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p class="no-data">No notes yet. Create one to get started!</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="createModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('createModal')">&times;</span>
+        <h2>Add Note</h2>
+        <form method="POST" action="{{ url_for('notes.create_note') }}">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="subject_id">Subject (Optional)</label>
+                <select id="subject_id" name="subject_id">
+                    <option value="">No Subject</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="content">Content</label>
+                <textarea id="content" name="content" rows="6" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Note</button>
+        </form>
+    </div>
+</div>
+
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('editModal')">&times;</span>
+        <h2>Edit Note</h2>
+        <form method="POST" id="editForm">
+            <div class="form-group">
+                <label for="edit_title">Title</label>
+                <input type="text" id="edit_title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="edit_content">Content</label>
+                <textarea id="edit_content" name="content" rows="6" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Note</button>
+        </form>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/notes.js') }}"></script>
+{% endblock %}
