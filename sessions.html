@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel page-panel">
+    <div class="section-header">
+        <h2>Study Sessions</h2>
+        <a href="#newSession" class="primary small">New session</a>
+    </div>
+    <form id="newSession" method="post" class="form-grid small-form">
+        <label>Title</label>
+        <input type="text" name="title" required />
+        <label>Duration (minutes)</label>
+        <input type="number" name="duration" min="10" value="25" required />
+        <label>Subject</label>
+        <select name="subject_id">
+            <option value="">No subject</option>
+            {% for subject in subjects %}
+            <option value="{{ subject.id }}">{{ subject.name }}</option>
+            {% endfor %}
+        </select>
+        <label>Notes</label>
+        <textarea name="notes" rows="3"></textarea>
+        <button type="submit" class="primary">Log session</button>
+    </form>
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr><th>Title</th><th>Subject</th><th>Duration</th><th>Created</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for session in sessions %}
+                <tr>
+                    <td>{{ session.title }}</td>
+                    <td>{{ session.subject.name if session.subject else 'General' }}</td>
+                    <td>{{ session.duration }} min</td>
+                    <td>{{ session.created_at.strftime('%b %d') }}</td>
+                    <td>
+                        <a href="{{ url_for('main.edit_session', session_id=session.id) }}">Edit</a>
+                        <a href="{{ url_for('main.delete_session', session_id=session.id) }}" class="danger" onclick="return confirm('Delete this session?');">Delete</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="muted">No sessions recorded yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
