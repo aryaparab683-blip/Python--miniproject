@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel page-panel profile-panel">
+    <h2>Profile</h2>
+    <div class="profile-grid">
+        <div>
+            <h3>{{ current_user.name }}</h3>
+            <p>{{ current_user.email }}</p>
+            <p>Study streak: <strong>{{ current_user.streak }} days</strong></p>
+            <p>Member since {{ current_user.created_at.strftime('%b %Y') }}</p>
+        </div>
+        <div class="profile-card">
+            <h4>Tip</h4>
+            <p>Use the Pomodoro timer with focused sessions to build your streak and maintain daily progress.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
