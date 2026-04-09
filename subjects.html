@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel page-panel">
+    <div class="section-header">
+        <h2>Subjects</h2>
+        <a href="#newSubject" class="primary small">New subject</a>
+    </div>
+    <form id="newSubject" method="post" class="form-grid small-form">
+        <label>Name</label>
+        <input type="text" name="name" required />
+        <label>Color</label>
+        <input type="color" name="color" value="#6366f1" />
+        <button type="submit" class="primary">Save subject</button>
+    </form>
+    <div class="list-card">
+        {% for subject in subjects %}
+        <div class="list-item">
+            <span class="subject-chip" style="background: {{ subject.color }}33; border-color: {{ subject.color }}; color: {{ subject.color }};">{{ subject.name }}</span>
+            <div>
+                <form action="{{ url_for('main.edit_subject', subject_id=subject.id) }}" method="post" class="inline-form">
+                    <input type="text" name="name" value="{{ subject.name }}" required />
+                    <input type="color" name="color" value="{{ subject.color }}" />
+                    <button type="submit" class="small">Update</button>
+                </form>
+                <a href="{{ url_for('main.delete_subject', subject_id=subject.id) }}" class="danger" onclick="return confirm('Delete this subject?');">Delete</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="muted">Create your first subject to categorize sessions.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
