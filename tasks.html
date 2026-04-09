@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel page-panel">
+    <div class="section-header">
+        <h2>Tasks</h2>
+        <a href="#newTask" class="primary small">Add task</a>
+    </div>
+    <form id="newTask" method="post" class="form-grid small-form">
+        <label>Title</label>
+        <input type="text" name="title" required />
+        <label>Subject</label>
+        <select name="subject_id">
+            <option value="">No subject</option>
+            {% for subject in subjects %}
+            <option value="{{ subject.id }}">{{ subject.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="primary">Create task</button>
+    </form>
+    <div class="list-card">
+        {% for task in tasks %}
+        <div class="list-item">
+            <span class="task-title {% if task.completed %}completed{% endif %}">{{ task.title }}</span>
+            <div>
+                <a href="{{ url_for('main.toggle_task', task_id=task.id) }}">{{ 'Undo' if task.completed else 'Done' }}</a>
+                <a href="{{ url_for('main.delete_task', task_id=task.id) }}" class="danger">Remove</a>
+            </div>
+            {% if task.subject %}<small class="muted">{{ task.subject.name }}</small>{% endif %}
+        </div>
+        {% else %}
+        <div class="muted">No tasks yet. Add one to stay organized.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
