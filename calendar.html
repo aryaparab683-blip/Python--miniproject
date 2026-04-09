@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel page-panel">
+    <div class="calendar-header">
+        <div>
+            <h2>Calendar</h2>
+            <p class="calendar-subtitle">Weekly session overview with a calendar-style layout.</p>
+        </div>
+        <div class="calendar-meta">
+            <span>Week view</span>
+        </div>
+    </div>
+
+    <div class="calendar-weekdays">
+        {% set day_names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] %}
+        {% for day_name in day_names %}
+        <div>{{ day_name }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="calendar-grid">
+        {% set day_names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] %}
+        {% for day_index in range(7) %}
+        <div class="calendar-day">
+            <div class="day-label">{{ day_names[day_index] }}</div>
+            <div class="calendar-day-events">
+                {% set found = false %}
+                {% for session in sessions %}
+                    {% if session.created_at.weekday() == day_index %}
+                        {% set found = true %}
+                        <div class="calendar-card">
+                            <strong>{{ session.title }}</strong>
+                            <span>{{ session.duration }} mins</span>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                {% if not found %}
+                <div class="calendar-empty">No sessions</div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
