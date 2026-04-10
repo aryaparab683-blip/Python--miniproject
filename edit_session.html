@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel page-panel">
+    <h2>Edit Session</h2>
+    <form method="post" class="form-grid small-form">
+        <label>Title</label>
+        <input type="text" name="title" value="{{ session.title }}" required />
+        <label>Duration (minutes)</label>
+        <input type="number" name="duration" value="{{ session.duration }}" min="10" required />
+        <label>Subject</label>
+        <select name="subject_id">
+            <option value="">No subject</option>
+            {% for subject in subjects %}
+            <option value="{{ subject.id }}" {% if session.subject_id == subject.id %}selected{% endif %}>{{ subject.name }}</option>
+            {% endfor %}
+        </select>
+        <label>Notes</label>
+        <textarea name="notes" rows="4">{{ session.notes }}</textarea>
+        <button type="submit" class="primary">Save changes</button>
+        <a href="{{ url_for('main.sessions') }}" class="secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

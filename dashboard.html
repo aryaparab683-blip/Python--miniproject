@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="grid-2">
+    <div class="panel welcome">
+        <h2>Welcome back, {{ current_user.name }}</h2>
+        <p>Track your focus, sessions, and progress in one place.</p>
+        <div class="stats-row">
+            <div class="stat-card">
+                <span>Total Sessions</span>
+                <strong>{{ sessions|length }}</strong>
+            </div>
+            <div class="stat-card">
+                <span>Study streak</span>
+                <strong>{{ current_user.streak }} days</strong>
+            </div>
+            <div class="stat-card">
+                <span>Latest time</span>
+                <strong>{{ total_time }} mins</strong>
+            </div>
+        </div>
+    </div>
+    <div class="panel stats">
+        <h3>Progress & reminders</h3>
+        <div class="progress-group">
+            {% for goal in goals %}
+                <div class="goal-card">
+                    <div class="goal-title">{{ goal.title }}</div>
+                    <div class="progress-bar"><span style="width: {{ (goal.progress / goal.target * 100) if goal.target else 0 }}%"></span></div>
+                    <small>{{ goal.progress }}/{{ goal.target }} completed</small>
+                </div>
+            {% else %}
+                <p class="small">No goals yet. Add one on the Goals page.</p>
+            {% endfor %}
+        </div>
+        {% if reminders %}
+        <div class="alerts">
+            <h4>Reminders</h4>
+            <ul>
+                {% for reminder in reminders %}
+                <li>{{ reminder.message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="grid-3">
+    <div class="panel">
+        <h3>Recent sessions</h3>
+        <ul class="list-card">
+            {% for session in sessions %}
+                <li><strong>{{ session.title }}</strong><span>{{ session.duration }} min</span></li>
+            {% else %}
+                <li class="muted">No sessions logged yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="panel">
+        <h3>Active subjects</h3>
+        <ul class="tag-list">
+            {% for subject in subjects %}
+                <li style="border-color: {{ subject.color }}; color: {{ subject.color }}">{{ subject.name }}</li>
+            {% else %}
+                <li class="muted">Create subjects to organize sessions.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="panel chart-panel">
+        <h3>Subject breakdown</h3>
+        <canvas id="subjectChart" data-labels='{{ subject_breakdown|map(attribute="name")|list|tojson }}' data-values='{{ subject_breakdown|map(attribute="count")|list|tojson }}' data-colors='{{ subject_breakdown|map(attribute="color")|list|tojson }}'></canvas>
+    </div>
+</section>
+
+<section class="panel timer-panel">
+    <div>
+        <h3>Pomodoro timer</h3>
+        <div class="timer-display" id="timerDisplay">25:00</div>
+        <div class="timer-controls">
+            <button id="startBtn" class="secondary">Start</button>
+            <button id="pauseBtn" class="secondary">Pause</button>
+            <button id="resetBtn" class="secondary">Reset</button>
+        </div>
+        <p class="timer-note">Focus: 25 minutes, Break: 5 minutes. Stay disciplined.</p>
+    </div>
+</section>
+
+<section class="panel notes-panel">
+    <h3>Last notes</h3>
+    <ul class="note-grid">
+        {% for note in notes %}
+            <li>
+                <strong>{{ note.title }}</strong>
+                <p>{{ note.content[:120] }}{% if note.content|length > 120 %}...{% endif %}</p>
+            </li>
+        {% else %}
+            <li class="muted">Add notes to collect ideas and reflections.</li>
+        {% endfor %}
+    </ul>
+</section>
+{% endblock %}
