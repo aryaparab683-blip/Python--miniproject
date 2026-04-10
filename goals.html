@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel page-panel">
+    <div class="section-header">
+        <h2>Goals</h2>
+        <a href="#newGoal" class="primary small">New goal</a>
+    </div>
+    <form id="newGoal" method="post" class="form-grid small-form">
+        <label>Title</label>
+        <input type="text" name="title" required />
+        <label>Current progress</label>
+        <input type="number" name="progress" min="0" value="0" />
+        <label>Target</label>
+        <input type="number" name="target" min="1" value="100" required />
+        <button type="submit" class="primary">Add goal</button>
+    </form>
+    <div class="list-card">
+        {% for goal in goals %}
+        <div class="goal-card">
+            <div class="goal-header">
+                <strong>{{ goal.title }}</strong>
+                <form action="{{ url_for('main.update_goal', goal_id=goal.id) }}" method="post" class="inline-form">
+                    <input type="number" name="progress" min="0" max="{{ goal.target }}" value="{{ goal.progress }}" />
+                    <button type="submit" class="primary small">Update</button>
+                </form>
+            </div>
+            <div class="progress-bar"><span style="width: {{ (goal.progress / goal.target * 100) if goal.target else 0 }}%"></span></div>
+            <small>{{ goal.progress }}/{{ goal.target }} completed</small>
+        </div>
+        {% else %}
+        <div class="muted">Add a goal to stay motivated.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
